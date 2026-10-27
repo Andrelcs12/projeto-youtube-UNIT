@@ -1,7 +1,7 @@
 package com.media.transcoder.upload.service;
 
 import com.media.transcoder.shared.ApiException;
-import com.media.transcoder.upload.model.UploadRequest;
+import com.media.transcoder.upload.dto.UploadRequest;
 import com.sun.net.httpserver.HttpExchange;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -37,8 +37,10 @@ public class MultipartUploadParser {
                 if (content.length > maxBytes) throw new ApiException(413, "Upload excede o limite de 20 MB.");
                 String origin = field(wire, boundary, "origin");
                 String permission = field(wire, boundary, "permission");
+                String profilesValue = field(wire, boundary, "profiles");
                 if (origin.isBlank() || permission.isBlank()) throw new ApiException(400, "Informe a origem do vídeo e registre a permissão de uso.");
-                return new UploadRequest(filename, origin, permission, content);
+                var profiles = profilesValue.isBlank() ? java.util.List.of("360p", "480p") : java.util.Arrays.stream(profilesValue.split(",")).map(String::trim).filter(value -> !value.isBlank()).distinct().toList();
+                return new UploadRequest(filename, origin, permission, profiles, content);
             }
         }
         throw new ApiException(400, "Campo de arquivo 'file' não encontrado.");

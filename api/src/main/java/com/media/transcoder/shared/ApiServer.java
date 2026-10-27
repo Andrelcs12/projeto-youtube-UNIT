@@ -3,8 +3,10 @@ package com.media.transcoder.shared;
 import com.media.transcoder.arquivos.controller.ArquivoController;
 import com.media.transcoder.jobs.controller.JobController;
 import com.media.transcoder.jobs.controller.JobListController;
+import com.media.transcoder.posts.controller.PostController;
 import com.media.transcoder.tentativas.controller.TentativaController;
 import com.media.transcoder.upload.controller.UploadController;
+import com.media.transcoder.upload.controller.UploadPolicyController;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
 import java.io.IOException;
@@ -13,10 +15,12 @@ import java.util.concurrent.Executors;
 
 public class ApiServer implements AutoCloseable {
     private final HttpServer server;
-    public ApiServer(AppConfig config,UploadController uploads,JobController jobs,JobListController jobList,ArquivoController files,TentativaController retries)throws IOException{
+    public ApiServer(AppConfig config,UploadController uploads,UploadPolicyController policy,JobController jobs,JobListController jobList,PostController posts,ArquivoController files,TentativaController retries)throws IOException{
         server=HttpServer.create(new InetSocketAddress("127.0.0.1",config.port()),64);
         server.setExecutor(Executors.newFixedThreadPool(Math.max(4,Runtime.getRuntime().availableProcessors())));
         server.createContext("/videos",safe(uploads::handle));
+        server.createContext("/upload-config",safe(policy::handle));
+        server.createContext("/posts",safe(posts::handle));
         server.createContext("/jobs",safe(exchange->{if(exchange.getRequestURI().getPath().equals("/jobs"))jobList.handle(exchange);else{String path=exchange.getRequestURI().getPath();if(path.endsWith("/arquivos"))files.list(exchange);else if(path.endsWith("/tentativas"))retries.handle(exchange);else jobs.handle(exchange);}}));
         server.createContext("/arquivos/",safe(files::download));
         server.createContext("/health",safe(exchange->HttpSupport.sendJson(exchange,200,java.util.Map.of("status","UP"))));

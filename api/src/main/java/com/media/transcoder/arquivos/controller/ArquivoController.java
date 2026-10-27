@@ -19,7 +19,8 @@ public class ArquivoController {
         try {
             var file=service.get(HttpSupport.pathId(exchange,"/arquivos/",""));
             if(!Files.isRegularFile(file.path()))throw new ApiException(404,"Arquivo indisponível.");
-            exchange.getResponseHeaders().set("Content-Type","video/mp4");exchange.getResponseHeaders().set("Content-Disposition","attachment; filename=\""+file.filename()+"\"");exchange.getResponseHeaders().set("X-Content-Type-Options","nosniff");
+            String safeName=file.filename().replaceAll("[^A-Za-z0-9._-]","_");
+            exchange.getResponseHeaders().set("Content-Type","video/mp4");exchange.getResponseHeaders().set("Content-Disposition","attachment; filename=\""+safeName+"\"");exchange.getResponseHeaders().set("X-Content-Type-Options","nosniff");
             exchange.sendResponseHeaders(200,Files.size(file.path()));try(var out=exchange.getResponseBody()){Files.copy(file.path(),out);}
         }catch(ApiException e){HttpSupport.error(exchange,e.status(),e.getMessage());}catch(Exception e){HttpSupport.error(exchange,500,"Não foi possível baixar o arquivo.");}
     }
