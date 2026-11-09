@@ -14,6 +14,12 @@ mvn exec:java
 API padrão: `http://localhost:8080`. Painel Swing opcional: `mvn exec:java -Dexec.args="--swing"`.
 Para abrir API e interface: `mvn exec:java -Dexec.args="--swing"`. Configure `PORT`, `TRANSCODER_DATA_DIR`, `FFMPEG_BIN`, `FFPROBE_BIN`, `MAX_UPLOAD_BYTES` (padrão 20 MiB), `MAX_VIDEO_SECONDS` (padrão 20 s), `MAX_QUEUE_SIZE` (padrão 10) e `MAX_INPUT_HEIGHT` (padrão 2160; máximo 4320) pelo ambiente.
 
+No PowerShell, passe o argumento da interface como um único argumento para evitar que o Maven interprete `-Dexec.args` como fases separadas:
+
+```powershell
+mvn exec:java "-Dexec.args=--swing"
+```
+
 ## Rotas
 
 | Método | Rota | Resultado |

@@ -33,6 +33,6 @@ public class TranscoderApplication {
         Runtime.getRuntime().addShutdownHook(new Thread(()->{server.close();queue.close();}));
         server.start();
         if(java.util.Arrays.asList(args).contains("--swing"))new Dashboard("http://127.0.0.1:"+config.port()).show();
-        else new java.util.concurrent.CountDownLatch(1).await();
+        new java.util.concurrent.CountDownLatch(1).await();
     }
 }

@@ -40,7 +40,7 @@ public class UploadService {
     }
     private boolean signatureLooksLikeVideo(byte[] b, String name) {
         if (b.length < 4) return false;
-        if (name.endsWith(".mp4") || name.endsWith(".m4v") || name.endsWith(".mov")) return ascii(b, 4, 8).equals("ftyp");
+        if (name.endsWith(".mp4") || name.endsWith(".m4v") || name.endsWith(".mov")) return ascii(b, 4, 4).equals("ftyp");
         if (name.endsWith(".mkv")) return (b[0]&255)==0x1a && (b[1]&255)==0x45 && (b[2]&255)==0xdf && (b[3]&255)==0xa3;
         if (name.endsWith(".webm")) return (b[0]&255)==0x1a && (b[1]&255)==0x45 && (b[2]&255)==0xdf && (b[3]&255)==0xa3;
         if (name.endsWith(".avi")) return ascii(b,0,4).equals("RIFF") && ascii(b,8,4).equals("AVI ");
