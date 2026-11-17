@@ -39,3 +39,7 @@ Jobs reais concluídos: `145be3d7-1486-4857-8ce7-da52a9b3ed54` (480p/3s), `e5f8b
 O Dashboard foi corrigido com `TableCellEditor`, bloqueio de duplo envio e download via arquivo `.part`. `mvn clean test` e `mvn clean package` foram executados novamente com sucesso.
 
 Carga: o primeiro cenário de 1 cliente foi executado e recebeu HTTP 429 porque a instância já tinha três jobs ativos. A execução automatizada dos cenários seguintes não concluiu dentro do comportamento esperado do script e não é declarada como aprovação; os cenários 3/5/10 permanecem pendentes de uma instância isolada por cenário.
+
+## Encerramento da tentativa de matriz isolada
+
+O harness foi refeito para criar uma API, diretório de dados, porta e barreira por cenário. Na execução de validação, uma instância Java deixada por tentativa anterior ocupou a porta `18101`; o log real registrou `java.net.BindException: Address already in use`. O processo foi identificado e encerrado, mas a rodada seguinte não produziu um `summary.json` completo dentro do timeout da sessão. Portanto, 1/3/5/10 continuam **não aprovados**; não há números inventados para a tabela de carga.
