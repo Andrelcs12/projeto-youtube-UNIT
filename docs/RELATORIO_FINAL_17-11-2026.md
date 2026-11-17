@@ -43,3 +43,5 @@ Carga: o primeiro cenário de 1 cliente foi executado e recebeu HTTP 429 porque 
 ## Encerramento da tentativa de matriz isolada
 
 O harness foi refeito para criar uma API, diretório de dados, porta e barreira por cenário. Na execução de validação, uma instância Java deixada por tentativa anterior ocupou a porta `18101`; o log real registrou `java.net.BindException: Address already in use`. O processo foi identificado e encerrado, mas a rodada seguinte não produziu um `summary.json` completo dentro do timeout da sessão. Portanto, 1/3/5/10 continuam **não aprovados**; não há números inventados para a tabela de carga.
+
+Nova tentativa: o executor passou a escolher porta aleatória, registrar PID, usar `taskkill /PID /T` apenas para a árvore iniciada e sempre gerar `summary.json`. O primeiro cenário isolado gerou `clients-1/summary.json`, mas falhou em `startup timeout` apesar do log registrar `API Transcoder disponível em http://127.0.0.1:37620`. Isso evidencia uma incompatibilidade no critério de leitura do health/jobs do próprio harness; a matriz não foi aprovada.
