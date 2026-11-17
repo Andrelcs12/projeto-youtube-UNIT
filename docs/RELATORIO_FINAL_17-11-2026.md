@@ -29,3 +29,13 @@
 - Não há autenticação ou isolamento por usuário, conforme escopo do MVP.
 
 Não foram inventadas métricas, screenshots ou aprovações de cenários não executados.
+
+## Atualização de 17/11/2026
+
+FFmpeg 9.0.2 essentials foi baixado para `%TEMP%\\transcoder-ffmpeg-portable-qa`, sem instalação global. `libx264` foi confirmado. A API foi executada na porta 18083 com dados em `%TEMP%\\youtube-unit-qa-api-data`.
+
+Jobs reais concluídos: `145be3d7-1486-4857-8ce7-da52a9b3ed54` (480p/3s), `e5f8bbba-cc3f-42e1-9553-d018b11ca64b` (720p/6s) e `7e7ebf99-9420-45c5-9eef-6a6650b10257` (1080p/10s). Os downloads e hashes estão em `%TEMP%\\youtube-unit-qa-evidence\\downloads.jsonl`.
+
+O Dashboard foi corrigido com `TableCellEditor`, bloqueio de duplo envio e download via arquivo `.part`. `mvn clean test` e `mvn clean package` foram executados novamente com sucesso.
+
+Carga: o primeiro cenário de 1 cliente foi executado e recebeu HTTP 429 porque a instância já tinha três jobs ativos. A execução automatizada dos cenários seguintes não concluiu dentro do comportamento esperado do script e não é declarada como aprovação; os cenários 3/5/10 permanecem pendentes de uma instância isolada por cenário.
