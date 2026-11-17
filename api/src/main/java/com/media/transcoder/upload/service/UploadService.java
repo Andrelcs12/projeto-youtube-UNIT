@@ -25,7 +25,7 @@ public class UploadService {
         UUID id = UUID.randomUUID();
         Path source = storage.save(id, request.originalName(), request.content());
         Job job = new Job(id, request.originalName(), request.origin().trim(), request.permission().trim(), source, Instant.now(), request.profiles());
-        jobs.save(job);
+        if (!jobs.saveActiveIfBelow(job, 3)) { storage.delete(id); throw new ApiException(429, "Limite de 3 vídeos ativos atingido."); }
         try { queue.submit(job); }
         catch (RuntimeException error) { jobs.delete(id); storage.delete(id); throw new ApiException(429, "Fila cheia; tente novamente mais tarde."); }
         return new UploadReceipt("Vídeo recebido para processamento.", JobResponse.from(job));
