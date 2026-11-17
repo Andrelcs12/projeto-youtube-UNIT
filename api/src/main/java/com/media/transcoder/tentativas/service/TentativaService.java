@@ -14,7 +14,7 @@ public class TentativaService {
     public Job retry(String id){
         UUID uuid;try{uuid=UUID.fromString(id);}catch(IllegalArgumentException e){throw new ApiException(400,"ID do job inválido.");}
         Job job=jobs.find(uuid).orElseThrow(()->new ApiException(404,"Job não encontrado."));
-        synchronized(job){if(job.getStatus()!=JobStatus.FAILED)throw new ApiException(409,"Somente jobs com falha podem ser reenfileirados.");if(jobs.countActive()>=3)throw new ApiException(429,"Limite de 3 vídeos ativos atingido.");job.clearOutputs();job.status(JobStatus.QUEUED);jobs.save(job);try{queue.submit(job);}catch(RuntimeException e){job.fail("Fila cheia; tente novamente mais tarde.");throw new ApiException(429,"Fila cheia; tente novamente mais tarde.");}}
+        synchronized(job){if(job.getStatus()!=JobStatus.FAILED)throw new ApiException(409,"Somente jobs com falha podem ser reenfileirados.");job.clearOutputs();job.status(JobStatus.QUEUED);if(!jobs.saveActiveIfBelow(job,3)){job.fail("Limite de 3 vídeos ativos atingido.");throw new ApiException(429,"Limite de 3 vídeos ativos atingido.");}try{queue.submit(job);}catch(RuntimeException e){job.fail("Fila cheia; tente novamente mais tarde.");throw new ApiException(429,"Fila cheia; tente novamente mais tarde.");}}
         return job;
     }
     public RetryResponse retryResponse(String id){return new RetryResponse("Job reenfileirado para processamento.",com.media.transcoder.jobs.dto.JobResponse.from(retry(id)));}
